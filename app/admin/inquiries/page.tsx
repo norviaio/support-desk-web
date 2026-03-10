@@ -122,6 +122,9 @@ export default function AdminInquiriesPage() {
                   <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
                     受信日時
                   </th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">
+                    操作
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -163,6 +166,14 @@ export default function AdminInquiriesPage() {
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-700">
                       {new Date(inquiry.created_at).toLocaleString("ja-JP")}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <Link
+                        href={`/admin/inquiries/${inquiry.id}`}
+                        className="inline-flex rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-700"
+                      >
+                        詳細
+                      </Link>
                     </td>
                   </tr>
                 ))}

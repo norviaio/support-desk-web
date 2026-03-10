@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Inquiry = {
   id: number;
@@ -24,7 +25,6 @@ export default function InquiryDetailPage() {
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
   const [status, setStatus] = useState<Inquiry["status"]>("new");
   const [adminNote, setAdminNote] = useState("");
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     const fetchInquiry = async () => {
@@ -62,7 +62,7 @@ export default function InquiryDetailPage() {
     if (res.ok) {
       router.push("/admin/inquiries");
     } else {
-      setMessage(json.message ?? "更新失敗");
+      alert(json.message ?? "更新失敗");
     }
   };
 
@@ -98,7 +98,14 @@ export default function InquiryDetailPage() {
 
   return (
     <main className="mx-auto max-w-3xl space-y-6 p-10">
-      <h1 className="text-2xl font-bold text-slate-900">問い合わせ詳細</h1>
+      <Link
+        href="/admin/inquiries"
+        className="inline-block text-sm text-slate-500 hover:text-slate-700"
+      >
+        ← 一覧へ戻る
+      </Link>
+
+      <h1 className="text-2xl font-bold">問い合わせ詳細</h1>
 
       <div className="space-y-2 text-slate-700">
         <p>
