@@ -1,36 +1,188 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 問い合わせ管理システム (Inquiry Management System)
 
-## Getting Started
+support-desk-web
 
-First, run the development server:
+問い合わせフォームと管理画面を提供する Next.js アプリケーションです。  
+Laravel で構築した REST API と連携し、問い合わせ登録・一覧表示・詳細確認・ステータス更新を実装しています。  
+フロントエンドとバックエンドを分離した構成で、実務を想定した API 設計と管理画面のUIをポートフォリオとして制作しました。
 
-```bash
+---
+
+## デモ
+
+※ 後で Vercel デプロイURLを追加
+
+---
+
+## スクリーンショット
+
+### 問い合わせフォーム
+
+![問い合わせフォーム](images/contact.png)
+
+### 管理画面一覧
+
+![管理画面一覧](images/admin-list.png)
+
+### 問い合わせ詳細
+
+![問い合わせ詳細](images/admin-detail.png)
+
+---
+
+## セットアップ
+
+```
+git clone https://github.com/norviaio/support-desk-api
+cd support-desk-web
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 技術スタック
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Frontend
 
-## Learn More
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
 
-To learn more about Next.js, take a look at the following resources:
+### Backend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Laravel
+- PHP
+- MySQL
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## システム構成
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+Next.js (Frontend)
+↓ REST API
+Laravel (Backend)
+↓
+MySQL
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+フロントエンドとバックエンドを分離し、REST API を介して通信する構成にしています。
+
+---
+
+## ER図
+
+```mermaid
+erDiagram
+    inquiries {
+        bigint id PK
+        varchar name
+        varchar email
+        varchar subject
+        text message
+        enum status
+        text admin_note
+        timestamp created_at
+        timestamp updated_at
+    }
+```
+
+現在のMVPでは、問い合わせデータを `inquiries` テーブルで管理しています。
+
+---
+
+## 画面構成
+
+```
+/contact
+問い合わせフォーム
+
+/admin/inquiries
+問い合わせ一覧
+
+/admin/inquiries/{id}
+問い合わせ詳細・ステータス更新
+```
+
+---
+
+## 主な機能
+
+### 問い合わせフォーム
+
+- 問い合わせ送信
+- バリデーション
+- API経由でDB保存
+
+### 管理画面
+
+- 問い合わせ一覧表示
+- 問い合わせ詳細表示
+- ステータス更新
+- 管理メモ更新
+
+---
+
+## API連携
+
+このアプリは以下の Laravel API と連携しています。
+
+| Method | Endpoint            | 説明           |
+| ------ | ------------------- | -------------- |
+| POST   | /api/inquiries      | 問い合わせ登録 |
+| GET    | /api/inquiries      | 問い合わせ一覧 |
+| GET    | /api/inquiries/{id} | 問い合わせ詳細 |
+| PATCH  | /api/inquiries/{id} | ステータス更新 |
+
+---
+
+## 関連リポジトリ
+
+バックエンドAPI
+
+[support-desk-api](https://github.com/norviaio/support-desk-api)
+
+---
+
+## 設計のポイント
+
+### フロントエンド / バックエンド分離
+
+フロントエンドは Next.js、バックエンドは Laravel API として分離しています。  
+API を介して通信することで、フロントとバックエンドを独立して開発・デプロイできる構成にしています。
+
+### REST API 設計
+
+エンドポイントをリソースベースで設計し、HTTPメソッドで操作を表現しています。
+
+### 管理画面のUI設計
+
+管理画面では、問い合わせ対応の実務を想定し以下の操作を可能にしています。
+
+- 問い合わせ一覧確認
+- 問い合わせ詳細確認
+- ステータス更新（未対応 / 対応中 / 完了）
+- 管理メモ追加
+
+### バリデーション
+
+問い合わせ登録時には Laravel 側で以下のバリデーションを行っています。
+
+- name：必須 / 文字列 / 最大100文字
+- email：必須 / メール形式
+- subject：必須
+- message：必須 / 最大2000文字
+
+---
+
+## 今後の拡張（アイデア）
+
+このアプリはポートフォリオ用のMVPとして実装しています。  
+将来的には以下の機能拡張を想定しています。
+
+- 管理者ログイン
+- ページネーション
+- 検索機能
+- ステータスフィルタ
